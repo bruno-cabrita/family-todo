@@ -5,7 +5,7 @@ import Card from '../components/ui/Card.vue'
 
 <template>
   <BaseLayout class="p-6">
-    <h1 class="font-bold text-4xl text-purple-700 mb-4">Hello Vite!</h1>
+    <h1 class="font-bold text-4xl text-primary mb-4">Hello Vite!</h1>
     <Card class="mb-4">
       <h2 class="font-semibold text-xl mb-2">Title</h2>
       <p class="leading-tight mb-4">
