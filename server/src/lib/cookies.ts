@@ -4,37 +4,10 @@ import {
   getSignedCookie,
   setSignedCookie,
 } from 'hono/cookie'
-// import type { CookieOptions } from 'hono/cookie' // not exported somehow
+import type { CookieOptions } from 'hono/utils/cookie'
 import { ACCESS_TOKEN_EXPIRATION, AUTH_TOKEN_EXPIRATION } from '../consts.ts'
 import { addSecondsToDate } from '../utils.ts'
 import env from '../env.ts'
-
-type PartitionedCookieConstraint =
-  | {
-      partitioned: true
-      secure: true
-    }
-  | {
-      partitioned?: boolean
-      secure?: boolean
-    }
-
-type CookiePrefixOptions = 'host' | 'secure'
-
-type CookieOptions = {
-  domain?: string
-  expires?: Date
-  httpOnly?: boolean
-  maxAge?: number
-  path?: string
-  secure?: boolean
-  signingSecret?: string
-  sameSite?: 'Strict' | 'Lax' | 'None' | 'strict' | 'lax' | 'none'
-  partitioned?: boolean
-  priority?: 'Low' | 'Medium' | 'High'
-  prefix?: CookiePrefixOptions
-} & PartitionedCookieConstraint
-
 
 const COOKIES_SECRET = env.COOKIES_SECRET
 

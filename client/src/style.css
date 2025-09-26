@@ -37,7 +37,28 @@
 
   --color-font: var(--color-shade-dark);
   --color-background: var(--color-white);
-  --color-danger: var(--color-red-800);
+
+  --color-default: var(--color-shade);
+  --color-info: var(--color-sky-400);
+  --color-success: var(--color-lime-600);
+  --color-danger: var(--color-red-600);
+  --color-warning: var(--color-amber-500);
+
+}
+
+@media (prefer-color-scheme: dark) {
+  @theme {
+
+    --color-primary: var(--color-indigo-400);
+    --color-primary-inv: var(--color-black);
+
+    --color-shade-lightest: var(--color-neutral-900);
+    --color-shade-light: var(--color-neutral-800);
+    --color-shade: var(--color-neutral-400);
+    --color-shade-dark: var(--color-neutral-100);
+
+    --color-background: var(--color-neutral-950);
+  }
 }
 
 body {
@@ -49,5 +70,5 @@ input[type="text"],
 input[type="password"],
 input[type="number"],
 input[type="email"] {
-  @apply border-2 border-shade-light py-1 px-3 rounded-lg w-full;
+  @apply border-2 border-shade-light py-1 px-3 rounded-lg w-full text-font;
 }
