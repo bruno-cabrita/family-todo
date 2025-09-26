@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onBeforeMount, ref } from 'vue'
 import { solveChallengeWorkers } from 'altcha-lib'
+import type { Payload } from 'altcha-lib/types'
 import workerUrl from 'altcha-lib/worker?worker'
 import { rpc } from '../lib/rpc.ts'
 import Switch from './ui/Switch.vue'
@@ -8,28 +9,30 @@ import Switch from './ui/Switch.vue'
 const modelValue = defineModel()
 const emit = defineEmits(['complete', 'error'])
 const altchaState = ref('loading')
-let altcha
+let altchaChallenge
 
-async function solveAltchaChallenge() {
-  altchaState.value = 'verifing'
-  if (!altcha) return altchaState.value = 'error'
-  const { challenge, salt } = altcha
-  modelValue.value = await solveChallengeWorkers(
+async function solveAltchaChallenge({ challenge, salt, algorithm, signature }): Promise<Payload> {
+  const { number } = await solveChallengeWorkers(
     workerUrl, // Worker script URL or path
     8, // Spawn 8 workers
     challenge,
     salt,
   )
-  altchaState.value = 'complete'
+  return {
+    challenge, salt, algorithm, signature, number
+  }
 }
 
 async function switchChangeHandler(val: boolean) {
   if(!val) return
-  await solveAltchaChallenge()
+  altchaState.value = 'verifing'
+  if (!altchaChallenge) return altchaState.value = 'error'
+  modelValue.value = await solveAltchaChallenge(altchaChallenge)
+  altchaState.value = 'complete'
 }
 
 onBeforeMount(async () => {
-  altcha = await rpc.altcha.challenge()
+  altchaChallenge = await rpc.altcha.challenge()
     .catch(({message}) => {
       console.warn(message)
       altchaState.value = 'error'

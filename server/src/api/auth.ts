@@ -13,6 +13,7 @@ import {
 import { rpcAuth, rpcGuest } from '../lib/rpc.ts'
 import { db } from '../db/db.ts'
 import { userAccessTokens, userAuthTokens } from '../db/schemas.ts'
+import { AltchaPayloadSchema } from '../schemas.ts'
 import { timestamp } from '../utils.ts'
 import env from '../env.ts'
 import { sendAuthCodeMail } from '../lib/mail/mail.ts'
@@ -22,7 +23,7 @@ const routes = {
   create: rpcGuest
     .input(z.object({
       email: z.email().toLowerCase(),
-      altcha: z.string(),
+      altcha: AltchaPayloadSchema,
     }))
     .output(z.object({
       attempts: z.int().nonnegative(),
@@ -67,11 +68,6 @@ const routes = {
 
       if(env.ENVIRONMENT === 'development') {
         console.log('AUTH CODE:', code)
-        // ---
-        const mail = await sendAuthCodeMail({ code, to: input.email })
-        if(!mail.success)
-          throw new ORPCError('INTERNAL_SERVER_ERROR', { message: `Error sending mail notification to ${input.email}. ${mail.error}` })
-        // ---
       } else {
         const mail = await sendAuthCodeMail({ code, to: input.email })
         if(!mail.success)

@@ -1,7 +1,8 @@
 {
   "name": "@scope/server",
   "exports": {
-    "./types": "./src/types.ts"
+    "./types": "./src/types.ts",
+    "./schemas": "./src/schemas.ts"
   },
   "tasks": {
     "dev": "deno run -A --watch src/server.ts",

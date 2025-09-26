@@ -1,16 +1,5 @@
 <script setup lang="ts">
-import { onBeforeMount, ref } from 'vue'
-import { rpc } from '../lib/rpc.ts'
 import Card from '../components/ui/Card.vue'
-
-const data = ref('loading...')
-
-onBeforeMount(async () => {
-  const res = await rpc.altcha.challenge()
-    .catch(({message}) => console.log(message))
-
-  data.value = res
-})
 </script>
 
 <template>
@@ -33,9 +22,6 @@ onBeforeMount(async () => {
         sint? Ullam illum veniam, provident corporis ad doloribus. Velit dolores corporis hic nobis quis odit sunt
         dicta.
       </p>
-    </Card>
-    <Card class="mb-4">
-      <pre class="leading-tight text-xs mb-4">{{ JSON.stringify(data, null, '  ') }}</pre>
     </Card>
   </div>
 </template>

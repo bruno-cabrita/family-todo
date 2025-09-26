@@ -29,7 +29,7 @@ export const useAuthStore = defineStore(
   () => {
     const user = ref<UserResponse|null>(null)
 
-    async function sendAuthCode({email, altcha}: {email: string, altcha: string}): Promise<SendAuthCodeResponse> {
+    async function sendAuthCode({email, altcha}: {email: string, altcha: any}): Promise<SendAuthCodeResponse> {
       const { isSuccess, data, error } = await safe(rpc.auth.create({email, altcha}))
 
       if(!isSuccess) return {
