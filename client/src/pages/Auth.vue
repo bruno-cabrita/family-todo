@@ -5,6 +5,7 @@ import { z } from 'zod'
 import Card from '../components/ui/Card.vue'
 import Button from '../components/ui/Button.vue'
 import Altcha from '../components/Altcha.vue'
+import Modal from '../components/Modal.vue'
 
 const AltchaSchema = z.object({
   number: z.number(),
@@ -12,6 +13,7 @@ const AltchaSchema = z.object({
   worker: z.boolean().optional(),
 })
 
+const isCodeModalVisible = ref<boolean>(true)
 const email = ref<string>()
 const altcha = ref<z.infer<typeof AltchaSchema>>()
 
@@ -37,5 +39,9 @@ async function submit() {
         <Button class="mx-auto" :disabled="!isFormValid">Entrar</Button>
       </form>
     </Card>
+
+    <Modal :show="isCodeModalVisible" @hide="isCodeModalVisible = false">
+      modal
+    </Modal>
   </div>
 </template>

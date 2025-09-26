@@ -15,7 +15,7 @@ import { db } from '../db/db.ts'
 import { userAccessTokens, userAuthTokens } from '../db/schemas.ts'
 import { timestamp } from '../utils.ts'
 import env from '../env.ts'
-import { sendAuthCodeMail } from '../lib/mail.ts'
+import { sendAuthCodeMail } from '../lib/mail/mail.ts'
 
 const routes = {
 
@@ -67,6 +67,11 @@ const routes = {
 
       if(env.ENVIRONMENT === 'development') {
         console.log('AUTH CODE:', code)
+        // ---
+        const mail = await sendAuthCodeMail({ code, to: input.email })
+        if(!mail.success)
+          throw new ORPCError('INTERNAL_SERVER_ERROR', { message: `Error sending mail notification to ${input.email}. ${mail.error}` })
+        // ---
       } else {
         const mail = await sendAuthCodeMail({ code, to: input.email })
         if(!mail.success)

@@ -42,9 +42,9 @@ const authMiddleware = rpcPublic.middleware(async ({context, next}) => {
   return next()
 })
 
-const requireGuest = rpcPublic.middleware(async ({context, next}) => {
+const requireGuest = rpcPublic.middleware(({context, next}) => {
   if(context.honoContext.var.auth?.userId)
-    throw new ORPCError('UNAUTHORIZED', { message: 'No tienes permiso para realizar esta acción.' })
+    throw new ORPCError('UNAUTHORIZED', { message: 'Não tens permissão para executares esta ação.' })
   return next()
 })
 
@@ -52,21 +52,21 @@ export const rpcGuest = rpcPublic
   .use(authMiddleware)
   .use(requireGuest)
 
-const requireAuth = rpcPublic.middleware(async ({context, next}) => {
+const requireAuth = rpcPublic.middleware(({context, next}) => {
   if(!context.honoContext.var.auth?.userId)
-    throw new ORPCError('UNAUTHORIZED', { message: 'No tienes permiso para realizar esta acción.' })
+    throw new ORPCError('UNAUTHORIZED', { message: 'Não tens permissão para executares esta ação.' })
   return next()
 })
 
-const requireAbility = rpcPublic.middleware(async ({procedure, context, next}) => {
+const requireAbility = rpcPublic.middleware(({procedure, context, next}) => {
   /* @ts-ignore */
   const ability = procedure['~orpc'].meta.requiresAbility
 
   if(!ability) 
-    throw new ORPCError('INTERNAL_SERVER_ERROR', { message: 'Esta solicitud debe tener un permiso definido.' })
+    throw new ORPCError('INTERNAL_SERVER_ERROR', { message: 'Esta ação tem de ter uma permissão defenida.' })
 
   if(!context.honoContext.var.auth?.abilities.includes(ability))
-    throw new ORPCError('UNAUTHORIZED', { message: 'No tienes permiso para realizar esta acción.' })
+    throw new ORPCError('UNAUTHORIZED', { message: 'Não tens permissão para executares esta ação.' })
 
   return next()
 })

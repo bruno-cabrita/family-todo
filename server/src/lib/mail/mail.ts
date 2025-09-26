@@ -1,6 +1,6 @@
 import { MailtrapClient } from 'mailtrap'
 import type { Address } from 'mailtrap'
-import env from '../env.ts'
+import env from '../../env.ts'
 
 export type Mail = {
   to: Address[],

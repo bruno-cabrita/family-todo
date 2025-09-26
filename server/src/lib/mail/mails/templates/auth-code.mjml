@@ -1,7 +1,7 @@
 <mjml lang="pt-PT">
   <mj-head>
-    <mj-title>Código de autenticación</mj-title>
-    <mj-preview>Código de autenticación</mj-preview>
+    <mj-title>Código de autenticação</mj-title>
+    <mj-preview>Código de autenticação</mj-preview>
     <mj-breakpoint width="480px" />
     <mj-attributes>
       <mj-all font-family="Arial, Helvetica, sans-serif" color="#000" font-size="16px" />
@@ -12,19 +12,16 @@
 
     <mj-section></mj-section>
 
-    <mj-section background-color="#FFF" border="1px solid #45B6F6">
+    <mj-section background-color="#FFF" border="1px solid #372aac">
       <mj-column>
-        <mj-text align="center" font-weight="bold" padding-bottom="8px" font-size="18px" color="#002778">
-          ¡Estás a punto de tener más fuerza para explorar!
-        </mj-text>
         <mj-text align="center" padding-bottom="16px">
-          Tu código de autenticación para la app Friso:
+          Código de autenticação:
         </mj-text>
-        <mj-text font-weight="bold" align="center" font-size="24px" text-transform="uppercase" letter-spacing="4px" color="#002778">
+        <mj-text font-weight="bold" align="center" font-size="24px" text-transform="uppercase" letter-spacing="4px" color="#372aac">
           ${body.code}
         </mj-text>
         <mj-text padding-top="30px" color="#737373" padding-bottom="0" font-size="13px" align="center">
-          Si no hiciste este pedido, ignora este mensaje e informa al técnico responsable.
+          Se não fizeste este pedido, ignora esta mensagem e informa o técnico responsável pela aplicação.
         </mj-text>
       </mj-column>
     </mj-section>
