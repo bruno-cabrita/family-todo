@@ -1,0 +1,20 @@
+<mjml lang="pt-PT">
+  <mj-head>
+    <mj-title>Save the date</mj-title>
+    <mj-preview>Save the date</mj-preview>
+    <mj-breakpoint width="480px" />
+    <mj-attributes>
+      <mj-all font-family="Arial, Helvetica, sans-serif" color="#000" font-size="16px" />
+      <mj-text line-height="125%" />
+    </mj-attributes>
+  </mj-head>
+  <mj-body>
+
+    <mj-section background-color="#FFF">
+      <mj-column>
+        <mj-image width="600px" src="https://masfuerzaparaexplorar.com/public/emails/save-the-date/email.png" target="_blank" href="https://masfuerzaparaexplorar.com/save-the-date" padding="0" alt="Save the date"/>
+      </mj-column>
+    </mj-section>
+
+  </mj-body>
+</mjml>

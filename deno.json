@@ -1,0 +1,40 @@
+{
+  "nodeModulesDir": "auto",
+  "workspace": ["./client", "./server"],
+  "tasks": {
+    "client:dev": "deno task -f @scope/client dev",
+    "client:build": "deno task -f @scope/client build",
+    "server:dev": "deno task -f @scope/server dev",
+    "server:serve": "deno task -f @scope/server serve",
+    "db:push": "deno task -f @scope/server db:push",
+    "db:seed": "deno task -f @scope/server db:seed",
+    "db:generate": "deno task -f @scope/server db:generate",
+    "db:migrate": "deno task -f @scope/server db:migrate",
+    "db:studio": "deno task -f @scope/server db:studio",
+    "dev": {
+      "description": "Start dev server.",
+      "dependencies": ["client:dev", "server:dev"]
+    },
+    "preview": {
+      "description": "Builds project and start server.",
+      "dependencies": ["client:build", "server:serve"]
+    }
+  },
+  "fmt": {
+    "semiColons": false,
+    "useTabs": false,
+    "singleQuote": true,
+    "indentWidth": 2,
+    "lineWidth": 120,
+    "exclude": ["*.svg"]
+  },
+  "lint": {
+    "exclude": ["no-explicit-any"]
+  },
+  "unstable": ["fmt-component"],
+  "imports": {
+    "altcha-lib": "npm:altcha-lib@^1.3.0",
+    "luxon": "npm:luxon@^3.7.2",
+    "zod": "npm:zod@^4.1.11"
+  }
+}
