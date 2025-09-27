@@ -20,6 +20,10 @@ export const useLayoutStore = defineStore('layout', () => {
     isMainNavVisible.value = false
   }
 
+  function toggleMainNav() {
+    isMainNavVisible.value = !isMainNavVisible.value
+  }
+
   function setAlert(payload: Omit<Alert, 'isVisible'>) {
     alert.message = payload.message
     alert.type = payload.type
@@ -42,5 +46,6 @@ export const useLayoutStore = defineStore('layout', () => {
     isMainNavVisible,
     showMainNav,
     hideMainNav,
+    toggleMainNav,
   }
 })

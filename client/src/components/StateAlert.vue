@@ -23,16 +23,18 @@ onMounted(() => {
 </script>
 
 <template>
-  <Transition>
-    <div v-if="layout.alert.isVisible" class="fixed z-50 bottom-0 left-0 right-0 px-4 pb-2">
-      <Alert
-        :type="layout.alert.type"
-        @close="closeHandler"
-      >
-        {{ layout.alert.message }}
-      </Alert>
-    </div>
-  </Transition>
+  <Teleport to="#modals">
+    <Transition>
+      <div v-if="layout.alert.isVisible" class="fixed z-30 bottom-0 left-0 right-0 px-4 pb-2">
+        <Alert
+          :type="layout.alert.type"
+          @close="closeHandler"
+        >
+          {{ layout.alert.message }}
+        </Alert>
+      </div>
+    </Transition>
+  </Teleport>
 </template>
 
 <style scoped>
