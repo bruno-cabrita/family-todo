@@ -1,7 +1,7 @@
 import { DateTime } from 'luxon'
 import { z } from 'zod'
 
-export function round(numb: number, decimalHouses: number = 0) {
+export function round(numb: number, decimalHouses: number = 0): number {
   const pow = Math.pow(10,decimalHouses)
   return Math.round(numb * pow) / pow
 }
@@ -13,6 +13,10 @@ export function isEmail(email?: string): boolean {
 export function isAuthCode(code?: string): boolean {
   if (!code) return false
   return /^[ABCDEFGHJKLMNPQRSTUVWXYZ23456789]{3}$/.test(code.toUpperCase())
+}
+
+export function isMobile(): boolean {
+    return /Mobi|Android/i.test(navigator.userAgent);
 }
 
 export function formatDate(dateStr: string, options?: { hideTime?: boolean, showSeconds?: boolean }): string | undefined {
