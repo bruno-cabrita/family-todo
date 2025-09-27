@@ -12,7 +12,7 @@ import {
 } from '../lib/cookies.ts'
 import { rpcAuth, rpcGuest } from '../lib/rpc.ts'
 import { db } from '../db/db.ts'
-import { userAccessTokens, userAuthTokens } from '../db/schemas.ts'
+import { users, userAccessTokens, userAuthTokens } from '../db/schemas.ts'
 import { AltchaPayloadSchema } from '../schemas.ts'
 import { timestamp } from '../utils.ts'
 import env from '../env.ts'
@@ -35,6 +35,12 @@ const routes = {
 
       if(!isAltchaValid)
         throw new ORPCError('BAD_REQUEST', { message: 'Captcha incorrecto.' })
+
+      const adminExists = await db.$count(users, eq(users.roleId, "admin"))
+
+      if(!adminExists) {
+        await db.insert(users).values({ name: 'Administrador', email: input.email, roleId: 'admin' });
+      }
 
       const user = await db.query.users.findFirst({
         columns: { id: true },

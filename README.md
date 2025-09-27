@@ -1,4 +1,8 @@
-# Vite + Deno + Vue 3 + TypeScript
+# Family Todo
+
+## 📋 Instructions
+
+> If there isn't a administrator in th database, the first login attempt will automatically register the user as administrator.
 
 ## ⌨️ Commands
 
