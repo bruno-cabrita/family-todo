@@ -43,26 +43,24 @@
   --color-success: var(--color-lime-600);
   --color-danger: var(--color-red-600);
   --color-warning: var(--color-amber-500);
-
 }
 
+/* Dark mode not working*/
 @media (prefer-color-scheme: dark) {
-  @theme {
-
+  :root {
     --color-primary: var(--color-indigo-400);
     --color-primary-inv: var(--color-black);
-
+  
     --color-shade-lightest: var(--color-neutral-950);
     --color-shade-light: var(--color-neutral-800);
     --color-shade: var(--color-neutral-400);
     --color-shade-dark: var(--color-neutral-100);
-
+  
     --color-background: var(--color-neutral-900);
   }
 }
 
 body {
-  /* @apply font-light; */
   @apply text-font;
 }
 

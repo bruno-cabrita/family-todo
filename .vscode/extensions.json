@@ -1,3 +1,7 @@
 {
-  "recommendations": ["denoland.vscode-deno", "Vue.volar"]
+  "recommendations": [
+    "denoland.vscode-deno",
+    "Vue.volar",
+    "mjmlio.vscode-mjml"
+  ]
 }

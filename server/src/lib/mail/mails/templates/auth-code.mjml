@@ -4,7 +4,7 @@
     <mj-preview>Código de autenticação</mj-preview>
     <mj-breakpoint width="480px" />
     <mj-attributes>
-      <mj-all font-family="Arial, Helvetica, sans-serif" color="#000" font-size="16px" />
+      <mj-all font-family="Arial, Helvetica, sans-serif" color="#262626" font-size="16px" />
       <mj-text line-height="125%" />
     </mj-attributes>
   </mj-head>
@@ -12,16 +12,17 @@
 
     <mj-section></mj-section>
 
-    <mj-section background-color="#FFF" border="1px solid #372aac">
+    <mj-section background-color="#FFF" border="2px solid #372aac">
       <mj-column>
-        <mj-text align="center" padding-bottom="16px">
+        <mj-text align="center" padding-bottom="16px" font-weight="bold">
           Código de autenticação:
         </mj-text>
         <mj-text font-weight="bold" align="center" font-size="24px" text-transform="uppercase" letter-spacing="4px" color="#372aac">
           ${body.code}
         </mj-text>
         <mj-text padding-top="30px" color="#737373" padding-bottom="0" font-size="13px" align="center">
-          Se não fizeste este pedido, ignora esta mensagem e informa o técnico responsável pela aplicação.
+          Se não fizeste este pedido, ignora esta mensagem<br/>
+          e informa o técnico responsável pela aplicação.
         </mj-text>
       </mj-column>
     </mj-section>
