@@ -12,17 +12,11 @@ declare module 'hono' {
 }
 
 const distPath = '../client/dist'
-const rootDistPath = `${import.meta.dirname}/../${distPath}`
 
 const app = new Hono()
 
 app.route('/api', api)
 app.use('/*', serveStatic({ root: `${distPath}/` }))
+app.get('*', serveStatic({ path: `${distPath}/index.html` })) // Fallsback to VueRouter
 
-// Fallsback to VueRouter
-app.get('*', serveStatic({ path: `${rootDistPath}/index.html` }))
-
-export default {
-  port: 4200,
-  fetch: app.fetch,
-}
+export default { port: 4200, fetch: app.fetch }
