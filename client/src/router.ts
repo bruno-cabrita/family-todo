@@ -26,16 +26,18 @@ router.beforeResolve((to) => {
 
   if (to.meta.requiresAuth && !auth.user) {
     auth.logout()
-    return { name: 'auth', query: { r: to.name ? `${to.name as string}`: undefined} }
-  } if (to.meta.requiresGuest && auth.user) return { name: 'home' }
+    return { name: 'auth', query: { r: to.name ? `${to.name as string}` : undefined } }
+  }
+  if (to.meta.requiresGuest && auth.user) return { name: 'home' }
 
   if (
     to.meta.requiresAuth &&
     to.meta.requiresAbility &&
     !auth.user?.role.abilities.includes(to.meta.requiresAbility as string)
   ) {
-    if (!import.meta.env.PROD)
+    if (!import.meta.env.PROD) {
       console.warn(`You don't have the ability '${to.meta.requiresAbility}' to navigate to '${to.fullPath}' route.`)
+    }
     return { name: 'home' }
   }
 })

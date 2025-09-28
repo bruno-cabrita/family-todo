@@ -1,7 +1,7 @@
 import { z, ZodError } from 'zod'
 import 'dotenv/config'
 
-const env = Deno.env.toObject()
+const env = process.env
 
 const EnvSchema = z.object({
   ENVIRONMENT: z.string().default('development'),

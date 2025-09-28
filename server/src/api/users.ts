@@ -10,7 +10,6 @@
 // import { timestamp } from '../utils.ts'
 
 const routes = {
-
   // update: rpcAuthAbility
   //   .meta({ requiresAbility: 'users:update' })
   //   .input(z.object({
@@ -22,7 +21,7 @@ const routes = {
   //   .output(z.boolean())
   //   .handler(async ({ input, context }) => {
   //     const { id, ...rest } = input
-      
+
   //     if(rest.roleId === 'owner') {
   //       const userAbilities = context.honoContext.var.auth?.abilities
   //       if(!userAbilities?.includes('users:update-owner'))
@@ -33,7 +32,7 @@ const routes = {
   //       .update(users)
   //       .set(rest)
   //       .where(eq(users.id, id))
-  //       .returning({ id: users.id})).at(0)
+  //       .returning({ id: users.id}))[0]
 
   //     return !!res
   //   }),
@@ -78,8 +77,6 @@ const routes = {
 
   //     return data
   //   }),
-
-
 }
 
 export default routes

@@ -5,12 +5,13 @@ import { db } from '../db/db.ts'
 import { roles } from '../db/schemas.ts'
 
 const routes = {
-
   list: rpcAuth
-    .output(z.object({
-      id: z.string(),
-      label: z.string(),
-    }).array())
+    .output(
+      z.object({
+        id: z.string(),
+        label: z.string(),
+      }).array(),
+    )
     .handler(async () => {
       return await db.query.roles.findMany({
         columns: { id: true, label: true },
@@ -19,20 +20,21 @@ const routes = {
 
   listDetailed: rpcAuthAbility
     .meta({ requiresAbility: 'roles:update' })
-    .output(z.object({
-      id: z.string(),
-      label: z.string(),
-      abilities: z.string(),
-    }).array())
+    .output(
+      z.object({
+        id: z.string(),
+        label: z.string(),
+        abilities: z.string(),
+      }).array(),
+    )
     .handler(async () => {
-  
       const roles = await db.query.roles.findMany()
 
       return roles.map((role) => {
         const { abilities, ...rest } = role
         return {
           ...rest,
-          abilities: abilities.join(',')
+          abilities: abilities.join(','),
         }
       })
     }),
@@ -48,7 +50,6 @@ const routes = {
     )
     .output(z.boolean())
     .handler(async ({ input }) => {
-
       for await (const role of input) {
         await db
           .update(roles)
@@ -60,7 +61,6 @@ const routes = {
 
       return true
     }),
-
 }
 
 export default routes

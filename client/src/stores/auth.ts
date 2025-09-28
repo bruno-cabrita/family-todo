@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { safe } from '@orpc/client'
+import type { Payload } from 'altcha-lib/types'
 import { STORAGE_AUTH_KEY } from './consts.ts'
 import { rpc } from '../lib/rpc.ts'
 
@@ -8,46 +9,50 @@ type UserResponse = Awaited<ReturnType<typeof rpc.auth.confirm>>
 type AuthResponse = Awaited<ReturnType<typeof rpc.auth.create>>
 
 type SendAuthCodeResponse = {
-  success: false,
+  success: false
   error: string
 } | {
-  success: true,
-  data: AuthResponse,
+  success: true
+  data: AuthResponse
 }
 
 type SubmitAuthCodeResponse = {
-  success: false,
-  error: string,
-  data?: AuthResponse,
+  success: false
+  error: string
+  data?: AuthResponse
 } | {
-  success: true,
-  data: UserResponse,
+  success: true
+  data: UserResponse
 }
 
 export const useAuthStore = defineStore(
   'auth',
   () => {
-    const user = ref<UserResponse|null>(null)
+    const user = ref<UserResponse | null>(null)
 
-    async function sendAuthCode({email, altcha}: {email: string, altcha: any}): Promise<SendAuthCodeResponse> {
-      const { isSuccess, data, error } = await safe(rpc.auth.create({email, altcha}))
+    async function sendAuthCode({ email, altcha }: { email?: string; altcha: Payload }): Promise<SendAuthCodeResponse> {
+      if (!email) return { success: false, error: `Email missing.` }
+      // if(!altcha) return { success: false, error: `Altcha missing.` }
+      const { isSuccess, data, error } = await safe(rpc.auth.create({ email, altcha }))
 
-      if(!isSuccess) return {
-        success: false,
-        error: error.message,
+      if (!isSuccess) {
+        return {
+          success: false,
+          error: error.message,
+        }
       }
 
       return { success: true, data }
     }
 
-    async function submitAuthCode({code }: {code: string}): Promise<SubmitAuthCodeResponse> {
+    async function submitAuthCode({ code }: { code: string }): Promise<SubmitAuthCodeResponse> {
       const { isSuccess, data, error, isDefined } = await safe(rpc.auth.confirm({ code }))
 
-      if(!isSuccess) {
-        if(!isDefined) {
+      if (!isSuccess) {
+        if (!isDefined) {
           return {
             success: false,
-            error: error.message
+            error: error.message,
           }
         } else {
           return {
@@ -57,7 +62,7 @@ export const useAuthStore = defineStore(
           }
         }
       }
-  
+
       user.value = data
 
       return {
@@ -66,10 +71,10 @@ export const useAuthStore = defineStore(
       }
     }
 
-    async function setAuthenticatedUser(): Promise<boolean>  {
-      const { isSuccess, data, /*error, isDefined*/ } = await safe(rpc.auth.getUser())
+    async function setAuthenticatedUser(): Promise<boolean> {
+      const { isSuccess, data /*error, isDefined*/ } = await safe(rpc.auth.getUser())
 
-      if(!isSuccess) {
+      if (!isSuccess) {
         reset()
         return false
       }
@@ -82,7 +87,7 @@ export const useAuthStore = defineStore(
     async function logout(): Promise<boolean> {
       const { isSuccess, data } = await safe(rpc.auth.logout())
       reset()
-      if(!isSuccess) return false
+      if (!isSuccess) return false
       return data
     }
 

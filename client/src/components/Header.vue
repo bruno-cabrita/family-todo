@@ -1,11 +1,9 @@
 <script setup lang="ts">
-import { IconMenuDeep, IconX } from '@tabler/icons-vue'
+import { IconMenuDeep } from '@tabler/icons-vue'
 import MainNav from './MainNav.vue'
-import Button from './ui/Button.vue'
 import { useLayoutStore } from '../stores/index.ts'
 
 const layout = useLayoutStore()
-
 </script>
 
 <template>

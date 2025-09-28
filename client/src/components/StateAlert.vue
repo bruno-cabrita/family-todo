@@ -10,7 +10,7 @@ function closeHandler() {
 }
 
 onMounted(() => {
-  if(history.state.alertMessage && history.state.alertType) {
+  if (history.state.alertMessage && history.state.alertType) {
     layout.setAlert({
       message: history.state.alertMessage,
       type: history.state.alertType,
@@ -19,7 +19,6 @@ onMounted(() => {
     history.state.alertType = undefined
   }
 })
-
 </script>
 
 <template>

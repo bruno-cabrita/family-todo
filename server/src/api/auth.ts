@@ -2,6 +2,7 @@ import { ORPCError } from '@orpc/server'
 import { eq } from 'drizzle-orm'
 import { z } from 'zod'
 import { verifySolution } from 'altcha-lib'
+import type { Payload } from 'altcha-lib/types'
 import {
   deleteAccessCookie,
   deleteAuthCookie,
@@ -12,73 +13,67 @@ import {
 } from '../lib/cookies.ts'
 import { rpcAuth, rpcGuest } from '../lib/rpc.ts'
 import { db } from '../db/db.ts'
-import {
-  users,
-  userAccessTokens,
-  userAuthTokens,
-} from '../db/schemas.ts'
-import { AltchaPayloadSchema } from '../schemas.ts'
+import { userAccessTokens, userAuthTokens, users } from '../db/schemas.ts'
 import { timestamp } from '../utils.ts'
 import env from '../env.ts'
 import { sendAuthCodeMail } from '../lib/mail/mail.ts'
 
 const routes = {
-
   create: rpcGuest
     .input(z.object({
       email: z.email().toLowerCase(),
-      altcha: AltchaPayloadSchema,
+      altcha: z.custom<Payload>(),
     }))
     .output(z.object({
       attempts: z.int().nonnegative(),
       expiresAt: z.string(),
     }))
     .handler(async ({ input, context }) => {
-
       const isAltchaValid = await verifySolution(input.altcha, env.HMAC_KEY)
 
-      if(!isAltchaValid)
+      if (!isAltchaValid) {
         throw new ORPCError('BAD_REQUEST', { message: 'Captcha incorrecto.' })
+      }
 
       let user = await db.query.users.findFirst({
         columns: { id: true },
-        where: ({email, active, deletedAt}, {eq, and, isNull}) => and(
-          eq(email, input.email),
-          eq(active, true),
-          isNull(deletedAt),
-        ),
+        where: ({ email, active, deletedAt }, { eq, and, isNull }) =>
+          and(
+            eq(email, input.email),
+            eq(active, true),
+            isNull(deletedAt),
+          ),
       })
 
-      if(!user) {
-
+      if (!user) {
         const invitation = await db.query.invitations.findFirst({
           columns: { id: true },
-          where: ({email}, {eq}) => eq(email, input.email),
+          where: ({ email }, { eq }) => eq(email, input.email),
         })
 
-        if(invitation) {
+        if (invitation) {
           user = (await db
             .insert(users)
             .values({ name: 'Anónimo', email: input.email, roleId: 'user' })
-            .returning({ id: users.id })).at(0)
+            .returning({ id: users.id }))[0]
         } else {
           const adminExists = await db.query.users.findFirst({
             columns: { id: true },
-            where: ({roleId}, {eq}) => eq(roleId, "admin"),
+            where: ({ roleId }, { eq }) => eq(roleId, 'admin'),
           })
-    
-          if(!adminExists) {
+
+          if (!adminExists) {
             user = (await db
               .insert(users)
               .values({ name: 'Administrador', email: input.email, roleId: 'admin' })
-              .returning({ id: users.id })).at(0)
+              .returning({ id: users.id }))[0]
           }
         }
-
       }
 
-      if(!user)
+      if (!user) {
         throw new ORPCError('BAD_REQUEST', { message: 'Email incorrecto.' })
+      }
 
       await db.delete(userAuthTokens).where(eq(userAuthTokens.userId, user.id))
 
@@ -90,26 +85,32 @@ const routes = {
           expiresAt: userAuthTokens.expiresAt,
           token: userAuthTokens.token,
           code: userAuthTokens.code,
-        })
-      ).at(0)
+        }))[0]
 
-      if(!authToken)
-        throw new ORPCError('INTERNAL_SERVER_ERROR', { message: 'Error al insertar el token de autenticación en la base de datos.' })
+      if (!authToken) {
+        throw new ORPCError('INTERNAL_SERVER_ERROR', {
+          message: 'Error al insertar el token de autenticación en la base de datos.',
+        })
+      }
 
       const { attempts, expiresAt, token, code } = authToken
 
-      if(env.ENVIRONMENT === 'development') {
+      if (env.ENVIRONMENT === 'development') {
         console.log('AUTH CODE:', code)
       } else {
         const mail = await sendAuthCodeMail({ code, to: input.email })
-        if(!mail.success)
-          throw new ORPCError('INTERNAL_SERVER_ERROR', { message: `Error sending mail notification to ${input.email}. ${mail.error}` })
+        if (!mail.success) {
+          throw new ORPCError('INTERNAL_SERVER_ERROR', {
+            message: `Error sending mail notification to ${input.email}. ${mail.error}`,
+          })
+        }
       }
 
       const cookie = await setAuthCookie(context.honoContext, token)
 
-      if (!cookie)
+      if (!cookie) {
         throw new ORPCError('INTERNAL_SERVER_ERROR', { message: 'Error en la definición de la cookie.' })
+      }
 
       return { attempts, expiresAt }
     }),
@@ -129,30 +130,32 @@ const routes = {
     .errors({
       NOT_ACCEPTABLE: {
         message: 'Código incorrecto.',
-        data: z.object({ 
+        data: z.object({
           attempts: z.int().nonnegative(),
           expiresAt: z.string(),
-        })
-      }
+        }),
+      },
     })
     .handler(async ({ input, context, errors }) => {
-
       const token = await getAuthCookie(context.honoContext)
 
-      if (!token || typeof token !== 'string')
+      if (!token || typeof token !== 'string') {
         throw new ORPCError('BAD_REQUEST', { message: 'No se ha encontrado auth token en las cookies.' })
+      }
 
       const authToken = await db.query.userAuthTokens.findFirst({
         columns: { id: true, expiresAt: true, code: true, attempts: true, userId: true },
-        where: (userAuthTokens, {eq}) => eq(userAuthTokens.token, token)
+        where: (userAuthTokens, { eq }) => eq(userAuthTokens.token, token),
       })
-      
-      if (!authToken)
+
+      if (!authToken) {
         throw new ORPCError('BAD_REQUEST', { message: 'No se ha encontrado ningún auth token en la base de datos.' })
-    
-      if (authToken.expiresAt < timestamp())
+      }
+
+      if (authToken.expiresAt < timestamp()) {
         throw new ORPCError('TIMEOUT', { message: 'El token de autenticación ha caducado.' })
-    
+      }
+
       if (authToken.code !== input.code) {
         if (authToken.attempts > 0) {
           const updatedAuthToken = (
@@ -164,10 +167,13 @@ const routes = {
                 attempts: userAuthTokens.attempts,
                 expiresAt: userAuthTokens.expiresAt,
               })
-          ).at(0)
-    
-          if (!updatedAuthToken)
-            throw new ORPCError('INTERNAL_SERVER_ERROR', { message: 'No se ha podido actualizar el auth token en la base de datos.' })
+          )[0]
+
+          if (!updatedAuthToken) {
+            throw new ORPCError('INTERNAL_SERVER_ERROR', {
+              message: 'No se ha podido actualizar el auth token en la base de datos.',
+            })
+          }
 
           const { attempts, expiresAt } = updatedAuthToken
 
@@ -185,18 +191,20 @@ const routes = {
           columns: { name: true, email: true },
           with: {
             role: {
-              columns: { label: true, abilities: true }
+              columns: { label: true, abilities: true },
             },
           },
-          where: ({id, active, deletedAt}, {eq, and, isNull}) => and(
-            eq(id, authToken.userId),
-            eq(active, true),
-            isNull(deletedAt),
-          )
+          where: ({ id, active, deletedAt }, { eq, and, isNull }) =>
+            and(
+              eq(id, authToken.userId),
+              eq(active, true),
+              isNull(deletedAt),
+            ),
         })
-    
-        if (!user)
+
+        if (!user) {
           throw new ORPCError('BAD_REQUEST', { message: 'Usuario no encontrado.' })
+        }
 
         const accessToken = (await db
           .insert(userAccessTokens)
@@ -205,11 +213,13 @@ const routes = {
             id: userAccessTokens.id,
             userId: userAccessTokens.userId,
             token: userAccessTokens.token,
-          })
-        ).at(0)
+          }))[0]
 
-        if (!accessToken)
-          throw new ORPCError('INTERNAL_SERVER_ERROR', { message: 'No se ha podido insertar el token de acceso en la base de datos.' })
+        if (!accessToken) {
+          throw new ORPCError('INTERNAL_SERVER_ERROR', {
+            message: 'No se ha podido insertar el token de acceso en la base de datos.',
+          })
+        }
 
         // delete all previous access tokens
         // a.k.a there's only one active session per user
@@ -222,8 +232,11 @@ const routes = {
 
         const cookie = await setAccessCookie(context.honoContext, accessToken.token)
 
-        if (!cookie)
-          throw new ORPCError('INTERNAL_SERVER_ERROR', { message: 'No se ha podido establecer la cookie de token de acceso.' })
+        if (!cookie) {
+          throw new ORPCError('INTERNAL_SERVER_ERROR', {
+            message: 'No se ha podido establecer la cookie de token de acceso.',
+          })
+        }
 
         return user
       }
@@ -231,12 +244,12 @@ const routes = {
 
   logout: rpcAuth
     .output(z.boolean())
-    .handler(async ({context}) => {
-
+    .handler(async ({ context }) => {
       const accessTokenCookie = await getAccessCookie(context.honoContext)
 
-      if(!accessTokenCookie || typeof accessTokenCookie !== 'string')
+      if (!accessTokenCookie || typeof accessTokenCookie !== 'string') {
         throw new ORPCError('BAD_REQUEST', { message: 'No se ha encontrado el token de acceso en las cookies.' })
+      }
 
       deleteAccessCookie(context.honoContext)
 
@@ -256,20 +269,21 @@ const routes = {
         abilities: z.string().array(),
       }),
     }))
-    .handler(async ({context}) => {
-
+    .handler(async ({ context }) => {
       const token = await getAccessCookie(context.honoContext)
 
-      if (!token || typeof token !== 'string')
+      if (!token || typeof token !== 'string') {
         throw new ORPCError('BAD_REQUEST', { message: 'No se ha encontrado el token de acceso en las cookies.' })
+      }
 
       const accessToken = await db.query.userAccessTokens.findFirst({
         columns: { expiresAt: true, userId: true },
-        where: (userAccessTokens, {eq}) => (eq(userAccessTokens.token, token))
+        where: (userAccessTokens, { eq }) => (eq(userAccessTokens.token, token)),
       })
-  
-      if (!accessToken || accessToken.expiresAt < timestamp())
+
+      if (!accessToken || accessToken.expiresAt < timestamp()) {
         throw new ORPCError('BAD_REQUEST', { message: 'No se ha encontrado el token de acceso en la base de datos.' })
+      }
 
       const user = await db.query.users.findFirst({
         columns: { email: true, name: true },
@@ -278,19 +292,20 @@ const routes = {
             columns: { label: true, abilities: true },
           },
         },
-        where: ({id, active, deletedAt}, {eq, and, isNull}) => and(
-          eq(id, accessToken.userId),
-          eq(active, true),
-          isNull(deletedAt),
-        ),
+        where: ({ id, active, deletedAt }, { eq, and, isNull }) =>
+          and(
+            eq(id, accessToken.userId),
+            eq(active, true),
+            isNull(deletedAt),
+          ),
       })
 
-      if (!user)
+      if (!user) {
         throw new ORPCError('BAD_REQUEST', { message: 'Usuario no encontrado.' })
+      }
 
       return user
     }),
-
 }
 
 export default routes

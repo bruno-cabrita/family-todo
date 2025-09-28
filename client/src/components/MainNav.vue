@@ -2,7 +2,7 @@
 import { useRouter } from 'vue-router'
 import { IconX } from '@tabler/icons-vue'
 import Button from './ui/Button.vue'
-import { useLayoutStore, useAuthStore } from '../stores/index.ts'
+import { useAuthStore, useLayoutStore } from '../stores/index.ts'
 
 const auth = useAuthStore()
 const layout = useLayoutStore()
@@ -11,9 +11,8 @@ const router = useRouter()
 async function logoutHandler() {
   await auth.logout()
   layout.hideMainNav()
-  router.push({ name: 'auth'})
+  router.push({ name: 'auth' })
 }
-
 </script>
 
 <template>

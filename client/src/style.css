@@ -50,12 +50,12 @@
   :root {
     --color-primary: var(--color-indigo-400);
     --color-primary-inv: var(--color-black);
-  
+
     --color-shade-lightest: var(--color-neutral-950);
     --color-shade-light: var(--color-neutral-800);
     --color-shade: var(--color-neutral-400);
     --color-shade-dark: var(--color-neutral-100);
-  
+
     --color-background: var(--color-neutral-900);
   }
 }
@@ -64,9 +64,9 @@ body {
   @apply text-font;
 }
 
-input[type="text"],
-input[type="password"],
-input[type="number"],
-input[type="email"] {
+input[type='text'],
+input[type='password'],
+input[type='number'],
+input[type='email'] {
   @apply border-2 border-shade-light py-1 px-3 rounded-lg w-full text-font;
 }

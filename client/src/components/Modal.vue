@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { watchEffect, useTemplateRef } from 'vue'
+import { useTemplateRef, watchEffect } from 'vue'
 import { IconX } from '@tabler/icons-vue'
 import Card from './ui/Card.vue'
 
@@ -18,7 +18,6 @@ watchEffect(() => {
   if (modelValue.value) modal.value?.showModal()
   else modal.value?.close()
 })
-
 </script>
 
 <template>
@@ -28,10 +27,13 @@ watchEffect(() => {
     @close="closeHandler"
   >
     <Card class="shadow-md">
-      <button class="absolute top-1 right-1 text-shade p-1 rounded-lg cursor-pointer transition-colors hover:text-shade-dark" @click="closeHandler">
-        <IconX/>
+      <button
+        class="absolute top-1 right-1 text-shade p-1 rounded-lg cursor-pointer transition-colors hover:text-shade-dark"
+        @click="closeHandler"
+      >
+        <IconX />
       </button>
-      <slot/>
+      <slot />
     </Card>
   </dialog>
 </template>

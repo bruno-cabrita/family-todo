@@ -1,9 +1,5 @@
 import type { Context } from 'hono'
-import {
-  deleteCookie,
-  getSignedCookie,
-  setSignedCookie,
-} from 'hono/cookie'
+import { deleteCookie, getSignedCookie, setSignedCookie } from 'hono/cookie'
 import type { CookieOptions } from 'hono/utils/cookie'
 import { ACCESS_TOKEN_EXPIRATION, AUTH_TOKEN_EXPIRATION } from '../consts.ts'
 import { addSecondsToDate } from '../utils.ts'

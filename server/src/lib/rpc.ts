@@ -1,35 +1,34 @@
-import { os, ORPCError } from '@orpc/server'
+import { ORPCError, os } from '@orpc/server'
 import type { HonoContext } from '../types.ts'
 import { getAccessCookie } from './cookies.ts'
 import { db } from '../db/db.ts'
 
 export const rpcPublic = os.$context<HonoContext>()
 
-const authMiddleware = rpcPublic.middleware(async ({context, next}) => {
-
+const authMiddleware = rpcPublic.middleware(async ({ context, next }) => {
   const accessCookie = await getAccessCookie(context.honoContext)
 
-  if(!accessCookie || typeof accessCookie != 'string') {
+  if (!accessCookie || typeof accessCookie != 'string') {
     context.honoContext.set('auth', undefined)
     return next()
   }
 
   const accessToken = await db.query.userAccessTokens.findFirst({
-    where: ({token}, {eq}) => eq(token, accessCookie)
+    where: ({ token }, { eq }) => eq(token, accessCookie),
   })
-  
-  if(!accessToken) {
+
+  if (!accessToken) {
     context.honoContext.set('auth', undefined)
     return next()
   }
-  
+
   const user = await db.query.users.findFirst({
     columns: { id: true },
     with: { role: true },
-    where: ({id}, {eq}) => eq(id, accessToken.userId)
+    where: ({ id }, { eq }) => eq(id, accessToken.userId),
   })
 
-  if(!user) {
+  if (!user) {
     context.honoContext.set('auth', undefined)
     return next()
   }
@@ -42,9 +41,10 @@ const authMiddleware = rpcPublic.middleware(async ({context, next}) => {
   return next()
 })
 
-const requireGuest = rpcPublic.middleware(({context, next}) => {
-  if(context.honoContext.var.auth?.userId)
+const requireGuest = rpcPublic.middleware(({ context, next }) => {
+  if (context.honoContext.var.auth?.userId) {
     throw new ORPCError('UNAUTHORIZED', { message: 'Não tens permissão para executares esta ação.' })
+  }
   return next()
 })
 
@@ -52,21 +52,24 @@ export const rpcGuest = rpcPublic
   .use(authMiddleware)
   .use(requireGuest)
 
-const requireAuth = rpcPublic.middleware(({context, next}) => {
-  if(!context.honoContext.var.auth?.userId)
+const requireAuth = rpcPublic.middleware(({ context, next }) => {
+  if (!context.honoContext.var.auth?.userId) {
     throw new ORPCError('UNAUTHORIZED', { message: 'Não tens permissão para executares esta ação.' })
+  }
   return next()
 })
 
-const requireAbility = rpcPublic.middleware(({procedure, context, next}) => {
+const requireAbility = rpcPublic.middleware(({ procedure, context, next }) => {
   /* @ts-ignore */
   const ability = procedure['~orpc'].meta.requiresAbility
 
-  if(!ability) 
+  if (!ability) {
     throw new ORPCError('INTERNAL_SERVER_ERROR', { message: 'Esta ação tem de ter uma permissão defenida.' })
+  }
 
-  if(!context.honoContext.var.auth?.abilities.includes(ability))
+  if (!context.honoContext.var.auth?.abilities.includes(ability)) {
     throw new ORPCError('UNAUTHORIZED', { message: 'Não tens permissão para executares esta ação.' })
+  }
 
   return next()
 })
@@ -77,4 +80,3 @@ export const rpcAuth = rpcPublic
 
 export const rpcAuthAbility = rpcAuth
   .use(requireAbility)
-

@@ -1,15 +1,16 @@
 import { sendMail } from '../mail.ts'
 
 type MailBody = {
-  code: string,
+  code: string
 }
 
 export async function sendAuthCodeMail({ to, ...body }: MailBody & { to: string }) {
   return await sendMail({
-    to: [{email: to}],
+    to: [{ email: to }],
     subject: 'Código de autenticação',
-    text: `Código de autenticação: ${body.code}\n\nSe não fizeste este pedido, ignora esta mensagem e informa o técnico responsável pela aplicação.`,
-    html: getEmailHTML(body)
+    text:
+      `Código de autenticação: ${body.code}\n\nSe não fizeste este pedido, ignora esta mensagem e informa o técnico responsável pela aplicação.`,
+    html: getEmailHTML(body),
   })
 }
 

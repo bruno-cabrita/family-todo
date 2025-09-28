@@ -3,7 +3,6 @@ import { reactive, ref } from 'vue'
 import type { Alert } from '../types.ts'
 
 export const useLayoutStore = defineStore('layout', () => {
-
   const alert = reactive<Alert>({
     isVisible: false,
     type: 'success',
@@ -31,11 +30,11 @@ export const useLayoutStore = defineStore('layout', () => {
   }
 
   function showSuccessAlert(message: string) {
-    setAlert({type: 'success', message})
+    setAlert({ type: 'success', message })
   }
 
   function showDangerAlert(message: string) {
-    setAlert({type: 'danger', message})
+    setAlert({ type: 'danger', message })
   }
 
   return {

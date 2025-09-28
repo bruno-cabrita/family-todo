@@ -13,13 +13,13 @@ app.use(router)
 app.mount('#app')
 
 const auth = useAuthStore()
-if(auth.user) {
+if (auth.user) {
   auth.setAuthenticatedUser()
     .then(async (res) => {
-      if(!res) {
+      if (!res) {
         await auth.logout()
         /* @ts-ignore */
-        app.$router.replace({name: 'auth'})
+        app.$router.replace({ name: 'auth' })
       }
     })
 }

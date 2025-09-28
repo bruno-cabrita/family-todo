@@ -15,11 +15,12 @@ const routes = {
     .handler(async () => {
       const res = await createChallenge({ hmacKey, maxNumber: 10000 })
 
-      if (!res)
+      if (!res) {
         throw new ORPCError('INTERNAL_SERVER_ERROR', { message: 'Error creating Altcha challenge.' })
+      }
 
       return res
-    })
+    }),
 }
 
 export default routes

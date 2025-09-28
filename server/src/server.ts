@@ -1,5 +1,5 @@
 import { Hono } from 'hono'
-import { serveStatic } from 'hono/deno'
+import { serveStatic } from 'hono/bun'
 import api from './api/index.ts'
 
 declare module 'hono' {
@@ -20,6 +20,9 @@ app.route('/api', api)
 app.use('/*', serveStatic({ root: `${distPath}/` }))
 
 // Fallsback to VueRouter
-app.get('*', async (c) => c.html(await Deno.readTextFile(`${rootDistPath}/index.html`)))
+app.get('*', serveStatic({ path: `${rootDistPath}/index.html` }))
 
-Deno.serve({ port: 4200 }, app.fetch)
+export default {
+  port: 4200,
+  fetch: app.fetch,
+}

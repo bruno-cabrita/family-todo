@@ -1,0 +1,14 @@
+{
+  "workspaces": ["client", "server"],
+  "scripts": {
+    "client:build": "bun run -F @scope/client build",
+    "server:serve": "bun run -F @scope/server serve",
+    "db:push": "bun run -F @scope/server db:push",
+    "db:seed": "bun run -F @scope/server db:seed",
+    "db:generate": "bun run -F @scope/server db:generate",
+    "db:migrate": "bun run -F @scope/server db:migrate",
+    "db:studio": "bun run -F @scope/server db:studio",
+    "dev": "bun run --workspaces dev",
+    "preview": "bun run client:build && bun run server:serve"
+  }
+}

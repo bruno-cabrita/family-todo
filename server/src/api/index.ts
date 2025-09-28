@@ -11,10 +11,10 @@ const api = new Hono()
 api.use(secureHeaders())
 
 const rpcRouter = {
-  altcha: {...altcha},
-  auth: {...auth},
-  users: {...users},
-  roles: {...roles},
+  altcha: { ...altcha },
+  auth: { ...auth },
+  users: { ...users },
+  roles: { ...roles },
 }
 
 export type RPCRouter = typeof rpcRouter
@@ -27,7 +27,7 @@ api.use('/*', async (c, next) => {
     context: { honoContext: c },
   })
 
-  if(matched) return c.newResponse(response.body, response)
+  if (matched) return c.newResponse(response.body, response)
 
   await next()
 })

@@ -7,7 +7,7 @@ import Header from '../components/Header.vue'
   <BaseLayout>
     <Header />
     <main class="grow flex flex-col">
-      <slot/>
+      <slot />
     </main>
   </BaseLayout>
 </template>
