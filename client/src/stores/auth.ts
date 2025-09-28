@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
-import { safe } from '@orpc/client'
+import { safe, ORPCError } from '@orpc/client'
 import type { Payload } from 'altcha-lib/types'
 import { STORAGE_AUTH_KEY } from './consts.ts'
 import { rpc } from '../lib/rpc.ts'
@@ -48,17 +48,17 @@ export const useAuthStore = defineStore(
     async function submitAuthCode({ code }: { code: string }): Promise<SubmitAuthCodeResponse> {
       const { isSuccess, data, error, isDefined } = await safe(rpc.auth.confirm({ code }))
 
-      if (!isSuccess) {
+      if (!isSuccess && error) {
         if (!isDefined) {
           return {
             success: false,
-            error: error.message,
+            error: (error as Error).message,
           }
         } else {
           return {
             success: false,
-            error: error.message,
-            data: error.data,
+            error: (error as ORPCError<"NOT_ACCEPTABLE", { attempts: number, expiresAt: string }>).message,
+            data: (error as ORPCError<"NOT_ACCEPTABLE", { attempts: number, expiresAt: string }>).data,
           }
         }
       }
@@ -88,7 +88,7 @@ export const useAuthStore = defineStore(
       const { isSuccess, data } = await safe(rpc.auth.logout())
       reset()
       if (!isSuccess) return false
-      return data
+      return data as boolean
     }
 
     const reset = () => {

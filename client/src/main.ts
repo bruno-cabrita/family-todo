@@ -15,7 +15,7 @@ app.mount('#app')
 const auth = useAuthStore()
 if (auth.user) {
   auth.setAuthenticatedUser()
-    .then(async (res) => {
+    .then(async (res: boolean) => {
       if (!res) {
         await auth.logout()
         /* @ts-ignore */

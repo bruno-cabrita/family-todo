@@ -1,0 +1,20 @@
+services:
+  family-todo:
+    image: bruno-cabrita/family-todo
+    container_name: family-todo
+    build: .
+    environment:
+      - ENVIRONMENT=${ENVIRONMENT}
+      - HMAC_KEY=${HMAC_KEY}
+      - COOKIES_SECRET=${COOKIES_SECRET}
+      - DB_FILE_NAME=${DB_FILE_NAME}
+      - MAILTRAP_API_KEY=${MAILTRAP_API_KEY}
+      - MAILTRAP_SENDER_EMAIL=${MAILTRAP_SENDER_EMAIL}
+      - MAILTRAP_SENDER_NAME=${MAILTRAP_SENDER_NAME}
+    ports:
+      - 4200:4200
+    volumes:
+      - storage-database:/app/storage/database
+
+volumes:
+  storage-database:

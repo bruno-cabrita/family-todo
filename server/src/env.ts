@@ -1,5 +1,5 @@
 import { z, ZodError } from 'zod'
-import 'dotenv/config'
+// import 'dotenv/config'
 
 const env = process.env
 
