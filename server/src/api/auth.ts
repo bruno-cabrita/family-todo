@@ -31,9 +31,8 @@ const routes = {
     .handler(async ({ input, context }) => {
       const isAltchaValid = await verifySolution(input.altcha, env.HMAC_KEY)
 
-      if (!isAltchaValid) {
+      if (!isAltchaValid)
         throw new ORPCError('BAD_REQUEST', { message: 'Captcha incorrecto.' })
-      }
 
       let user = await db.query.users.findFirst({
         columns: { id: true },
@@ -63,23 +62,16 @@ const routes = {
           })
 
           if (!adminExists) {
-            try {
-              user = (await db
-                .insert(users)
-                .values({ name: 'Administrador', email: input.email, roleId: 'admin' })
-                .returning({ id: users.id }))[0]
-            } catch(err) {
-              console.log('err:', err)
-            }
+            user = (await db
+              .insert(users)
+              .values({ name: 'Administrador', email: input.email, roleId: 'admin' })
+              .returning({ id: users.id }))[0]
           }
         }
       }
 
-      console.log('--> user:', user)
-
-      if (!user) {
+      if (!user)
         throw new ORPCError('BAD_REQUEST', { message: 'Email incorrecto.' })
-      }
 
       await db.delete(userAuthTokens).where(eq(userAuthTokens.userId, user.id))
 
