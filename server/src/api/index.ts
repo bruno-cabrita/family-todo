@@ -5,6 +5,7 @@ import roles from './roles.ts'
 import users from './users.ts'
 import auth from './auth.ts'
 import altcha from './altcha.ts'
+import invitations from './invitations.ts'
 
 const api = new Hono()
 
@@ -15,6 +16,7 @@ const rpcRouter = {
   auth: { ...auth },
   users: { ...users },
   roles: { ...roles },
+  invitations: { ...invitations },
 }
 
 export type RPCRouter = typeof rpcRouter
