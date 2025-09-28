@@ -12,7 +12,11 @@ import {
 } from '../lib/cookies.ts'
 import { rpcAuth, rpcGuest } from '../lib/rpc.ts'
 import { db } from '../db/db.ts'
-import { users, userAccessTokens, userAuthTokens } from '../db/schemas.ts'
+import {
+  users,
+  userAccessTokens,
+  userAuthTokens,
+} from '../db/schemas.ts'
 import { AltchaPayloadSchema } from '../schemas.ts'
 import { timestamp } from '../utils.ts'
 import env from '../env.ts'
@@ -36,13 +40,7 @@ const routes = {
       if(!isAltchaValid)
         throw new ORPCError('BAD_REQUEST', { message: 'Captcha incorrecto.' })
 
-      const adminExists = await db.$count(users, eq(users.roleId, "admin"))
-
-      if(!adminExists) {
-        await db.insert(users).values({ name: 'Administrador', email: input.email, roleId: 'admin' });
-      }
-
-      const user = await db.query.users.findFirst({
+      let user = await db.query.users.findFirst({
         columns: { id: true },
         where: ({email, active, deletedAt}, {eq, and, isNull}) => and(
           eq(email, input.email),
@@ -50,6 +48,34 @@ const routes = {
           isNull(deletedAt),
         ),
       })
+
+      if(!user) {
+
+        const invitation = await db.query.invitations.findFirst({
+          columns: { id: true },
+          where: ({email}, {eq}) => eq(email, input.email),
+        })
+
+        if(invitation) {
+          user = (await db
+            .insert(users)
+            .values({ name: 'Anónimo', email: input.email, roleId: 'user' })
+            .returning({ id: users.id })).at(0)
+        } else {
+          const adminExists = await db.query.users.findFirst({
+            columns: { id: true },
+            where: ({roleId}, {eq}) => eq(roleId, "admin"),
+          })
+    
+          if(!adminExists) {
+            user = (await db
+              .insert(users)
+              .values({ name: 'Administrador', email: input.email, roleId: 'admin' })
+              .returning({ id: users.id })).at(0)
+          }
+        }
+
+      }
 
       if(!user)
         throw new ORPCError('BAD_REQUEST', { message: 'Email incorrecto.' })
