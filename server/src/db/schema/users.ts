@@ -5,6 +5,7 @@ import { timestamp } from '../utils.ts'
 import { roles } from './roles.ts'
 import { userAccessTokens } from './userAccessTokens.ts'
 import { userAuthTokens } from './userAuthTokens.ts'
+import { groupsUsers } from './groupsUsers.ts'
 
 export const users = sqliteTable('users', {
   id: text({ length: 26 })
@@ -32,4 +33,5 @@ export const usersRelations = relations(users, ({ one, many }) => ({
   }),
   accessTokens: many(userAccessTokens),
   authTokens: many(userAuthTokens),
+  groupsUsers: many(groupsUsers),
 }))

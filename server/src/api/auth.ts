@@ -63,13 +63,19 @@ const routes = {
           })
 
           if (!adminExists) {
-            user = (await db
-              .insert(users)
-              .values({ name: 'Administrador', email: input.email, roleId: 'admin' })
-              .returning({ id: users.id }))[0]
+            try {
+              user = (await db
+                .insert(users)
+                .values({ name: 'Administrador', email: input.email, roleId: 'admin' })
+                .returning({ id: users.id }))[0]
+            } catch(err) {
+              console.log('err:', err)
+            }
           }
         }
       }
+
+      console.log('--> user:', user)
 
       if (!user) {
         throw new ORPCError('BAD_REQUEST', { message: 'Email incorrecto.' })

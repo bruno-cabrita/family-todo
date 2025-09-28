@@ -5,6 +5,21 @@
 > If there isn't a administrator in th database, the first login attempt will automatically register the user as
 > administrator.
 
+1. Install dependencies:
+```
+bun install
+```
+
+2. Set database:
+```
+bun run db:push && bun run db:seed
+```
+
+3. Start dev server:
+```
+bun run dev
+```
+
 ## ⌨️ Commands
 
 | Command           | Description                |

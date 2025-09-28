@@ -3,6 +3,7 @@ import { sqliteTable, text } from 'drizzle-orm/sqlite-core'
 import { ulid } from 'ulid'
 import { timestamp } from '../utils.ts'
 import { users } from './users.ts'
+import { groupsUsers } from './groupsUsers.ts'
 
 export const groups = sqliteTable('groups', {
   id: text({ length: 26 })
@@ -21,9 +22,10 @@ export const groups = sqliteTable('groups', {
   deletedAt: text(),
 })
 
-export const groupsRelations = relations(groups, ({ one }) => ({
+export const groupsRelations = relations(groups, ({ one, many }) => ({
   createdBy: one(users, {
     fields: [groups.createdById],
     references: [users.id],
   }),
+  groupsUsers: many(groupsUsers),
 }))

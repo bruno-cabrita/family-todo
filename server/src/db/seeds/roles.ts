@@ -28,7 +28,7 @@ const newRoles: RolesInsert[] = [
 
 export const rolesIds = newRoles.map((role: RolesInsert) => role.id)
 
-async function seed() {
+async function seedRoles() {
   await Promise.allSettled(newRoles.map(async (role: RolesInsert) => {
     const rowExists = await db.$count(roles, eq(roles.id, role.id))
     if (rowExists) {
@@ -47,4 +47,4 @@ async function seed() {
   console.log('Roles seeded!')
 }
 
-export default seed
+export default seedRoles

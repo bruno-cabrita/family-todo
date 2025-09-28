@@ -1,5 +1,5 @@
 import { relations } from 'drizzle-orm'
-import { sqliteTable, text, unique } from 'drizzle-orm/sqlite-core'
+import { sqliteTable, text, primaryKey } from 'drizzle-orm/sqlite-core'
 import { users } from './users.ts'
 import { groups } from './groups.ts'
 
@@ -10,8 +10,8 @@ export const groupsUsers = sqliteTable('groupsUsers', {
   userId: text({ length: 26 })
     .notNull()
     .references(() => users.id),
-}, (t) => [
-  unique().on(t.groupId, t.userId),
+}, (table) => [
+  primaryKey({ columns: [table.userId, table.groupId] }),
 ])
 
 export const groupsUsersRelations = relations(groupsUsers, ({ one }) => ({
