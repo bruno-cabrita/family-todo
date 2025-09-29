@@ -12,7 +12,7 @@ services:
       - MAILTRAP_SENDER_EMAIL=${MAILTRAP_SENDER_EMAIL}
       - MAILTRAP_SENDER_NAME=${MAILTRAP_SENDER_NAME}
     ports:
-      - 4200:4200
+      - 4200
     volumes:
       - storage-database:/app/storage/database
 

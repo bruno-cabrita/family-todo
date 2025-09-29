@@ -1,6 +1,5 @@
 .vscode
 node_modules
-storage
 README.md
 deno.json
 .idea
