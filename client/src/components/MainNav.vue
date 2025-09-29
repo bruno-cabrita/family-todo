@@ -13,6 +13,11 @@ async function logoutHandler() {
   layout.hideMainNav()
   router.push({ name: 'auth' })
 }
+
+async function invitationHandler() {
+  layout.hideMainNav()
+  console.log('invitationHandler()')
+}
 </script>
 
 <template>
@@ -25,7 +30,8 @@ async function logoutHandler() {
           </button>
         </div>
         <div class="grow flex flex-col justify-center items-center gap-4">
-          <Button @click="logoutHandler">Logout</Button>
+          <Button @click="invitationHandler">Convidar Pessoa</Button>
+          <Button class="mt-8" @click="logoutHandler">Sair</Button>
         </div>
       </div>
     </nav>
